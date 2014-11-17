@@ -20,8 +20,8 @@ function cc_pmed_load_fullstory() {
 		include( $fullstory_file );
 
 }
-//add_action( 'wp_footer',    'cc_pmed_load_fullstory' );
-//add_action( 'login_footer', 'cc_pmed_load_fullstory' );
+add_action( 'wp_footer',    'cc_pmed_load_fullstory' );
+add_action( 'login_footer', 'cc_pmed_load_fullstory' );
 
 /**
 * Embed Groove code into page footers to avoid anonymous support requests.
