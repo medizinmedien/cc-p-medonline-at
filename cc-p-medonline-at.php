@@ -3,7 +3,7 @@
  * Plugin Name: Custom Code for p.medonline.at
  * Description: Site-specific functionality for p.medonline.at
  * Author: Frank St&uuml;rzebecher
- * Version: 0.1
+ * Version: 0.2
  * Plugin URI: https://github.com/medizinmedien/allgemein/cc-p-medonline-at
  */
 
@@ -42,8 +42,8 @@ function cc_pmed_add_groove() {
 		include( $groove_include );
 
 }
-add_action( 'wp_footer',  'cc_pmed_add_groove' );
-add_action( 'login_head', 'cc_pmed_add_groove' );
+//add_action( 'wp_footer',  'cc_pmed_add_groove' );
+//add_action( 'login_head', 'cc_pmed_add_groove' );
 
 
 /**
