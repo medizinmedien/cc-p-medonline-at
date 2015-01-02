@@ -114,4 +114,8 @@ function cc_pmed_add_xframeoptions() {
 add_action( 'wp_head', 'cc_pmed_add_xframeoptions', 5 );
 
 
+/**
+ * Force SSL cookie
+ */
+add_filter( 'otat_force_https_cookie', '__return_true' );
 
