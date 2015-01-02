@@ -64,3 +64,24 @@ function cc_pmed_headway_ob_end_flush() {
 	ob_end_flush;
 }
 add_action('headway_html_close', 'cc_pmed_headway_ob_end_flush');
+
+
+/**
+ * Protect pages which are handled by plugin "One-time access tokens"
+ * and have no password protection.
+ */
+add_action( 'template_redirect', 'cc_pmed_not_logged_in', 1 );
+function cc_pmed_not_logged_in() {
+        global $post;
+
+        $protected_pages_list = array(
+                'ivokana',
+        );
+
+        if ( ! is_user_logged_in() && is_page( $protected_pages_list ) && empty( $post->post_password ) ) {
+                if ( function_exists( 'is_otat_protected_post' ) && is_otat_protected_post() )
+                        return; // Access will be handled by plugin "One-time access tokens".
+                else
+                        auth_redirect();
+        }
+}
