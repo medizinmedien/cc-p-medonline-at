@@ -68,20 +68,24 @@ add_action('headway_html_close', 'cc_pmed_headway_ob_end_flush');
 
 /**
  * Protect pages which are handled by plugin "One-time access tokens"
- * and have no password protection.
+ * and have no password protection after the end of campaigns.
  */
 add_action( 'template_redirect', 'cc_pmed_not_logged_in', 1 );
 function cc_pmed_not_logged_in() {
-        global $post;
+	global $post;
 
-        $protected_pages_list = array(
-                'ivokana',
-        );
+	// Always use the slug for this list! Works with posts and pages.
+	$protected_list = array(
+		'invokana',
+	);
 
-        if ( ! is_user_logged_in() && is_page( $protected_pages_list ) && empty( $post->post_password ) ) {
-                if ( function_exists( 'is_otat_protected_post' ) && is_otat_protected_post() )
-                        return; // Access will be handled by plugin "One-time access tokens".
-                else
-                        auth_redirect();
-        }
+	if ( ! is_user_logged_in() && in_array( $post->post_name, $protected_list ) && empty( $post->post_password ) ) {
+		if ( function_exists( 'is_otat_protected_post' ) && is_otat_protected_post() ) {
+			// Access will be handled by plugin "One-time access tokens".
+			return;
+		} else {
+			auth_redirect();
+		}
+	}
 }
+
