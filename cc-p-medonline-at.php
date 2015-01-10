@@ -108,8 +108,8 @@ function cc_pmed_force_ssl() {
 	global $post;
 
 	if ( $_SERVER['SERVER_PORT'] == 80 ) {
-                wp_redirect( 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
-                exit();
+		wp_redirect( 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
+		exit();
 	}
 }
 
@@ -118,8 +118,8 @@ function cc_pmed_force_ssl() {
  * Add X-Frame-Options directive to secure pages from being embedded.
  */
 function cc_pmed_add_xframeoptions() {
-        if ( ! is_admin() )
-                ?><meta http-equiv="X-Frame-Options" content="deny" /><?php
+	if ( ! is_admin() )
+	?><meta http-equiv="X-Frame-Options" content="deny" /><?php
 }
 add_action( 'wp_head', 'cc_pmed_add_xframeoptions', 5 );
 
