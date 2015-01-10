@@ -125,7 +125,7 @@ add_action( 'wp_head', 'cc_pmed_add_xframeoptions', 5 );
 
 
 /**
- * Force SSL cookie
+ * Force the "One time access tokens" plugin to create SSL cookies.
  */
 add_filter( 'otat_force_https_cookie', '__return_true' );
 
