@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name: Custom Code for p.medonline.at
- * Description: Site-specific functionality for p.medonline.at
+ * Description: Essentielle Funktionalität f&uuml;r p.medonline.at. Betrifft vor allem den Seitenschutz, falls Besucher nicht eingeloggt sind. HTTPS wird grundsätzlich erzwungen. Fullstory-Einbindung. Verhinderung des Einbettens von p.medonline.at-Inhalten in externe Frames.
  * Author: Frank St&uuml;rzebecher
- * Version: 0.2
+ * Version: 0.3
  * Plugin URI: https://github.com/medizinmedien/allgemein/cc-p-medonline-at
  */
 
@@ -67,25 +67,35 @@ add_action('headway_html_close', 'cc_pmed_headway_ob_end_flush');
 
 
 /**
- * Protect pages which are handled by plugin "One-time access tokens"
- * and have no password protection after the end of campaigns.
+ * Handler for content access when visitors are not logged in.
+ *
+ * By default all pages redirect to the login page. Excluded from this rule are
+ * the front page and a very small list of excluded pages. Logged in users have
+ * access to all content. A post password protected page will not redirect.
  */
 add_action( 'template_redirect', 'cc_pmed_not_logged_in', 1 );
 function cc_pmed_not_logged_in() {
 	global $post;
 
-	// Always use the slug for this list! Works with posts and pages.
-	$protected_list = array(
-		'invokana',
+	$slug = $post->post_name;
+
+	$redirect_excludes = array(
+		'impressum',
+		'kontakt',
 	);
 
-	if ( ! is_user_logged_in() && in_array( $post->post_name, $protected_list ) && empty( $post->post_password ) ) {
+	if ( ! is_front_page() && ! is_user_logged_in() && ! in_array( $slug, $redirect_excludes )
+	&& empty( $post->post_password ) ) {
+
 		if ( function_exists( 'is_otat_protected_post' ) && is_otat_protected_post() ) {
-			// Access will be handled by plugin "One-time access tokens".
+
+			// Hand access to plugin "One-time access tokens".
 			return;
+
 		} else {
-			auth_redirect();
+			wp_redirect( 'https://medonline.at/wp-login.php' );
 		}
+
 	}
 }
 
