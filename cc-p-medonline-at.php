@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name: Custom Code for p.medonline.at
- * Description: Essentielle Funktionalität f&uuml;r p.medonline.at. Betrifft vor allem den Seitenschutz, falls Besucher nicht eingeloggt sind. HTTPS wird grundsätzlich erzwungen. Fullstory-Einbindung. Verhinderung des Einbettens von p.medonline.at-Inhalten in externe Frames.
+ * Description: Essentielle Funktionalit&auml;t f&uuml;r p.medonline.at. Betrifft vor allem den Seitenschutz, falls Besucher nicht eingeloggt sind. HTTPS wird grunds&auml;tzlich erzwungen. Fullstory-Einbindung. Verhinderung des Einbettens von p.medonline.at-Inhalten in externe Frames.
  * Author: Frank St&uuml;rzebecher
- * Version:  0.3
+ * Version: 0.4
  * Plugin URI: https://github.com/medizinmedien/allgemein/cc-p-medonline-at
  */
 
@@ -128,4 +128,70 @@ add_action( 'wp_head', 'cc_pmed_add_xframeoptions', 5 );
  * Force the "One time access tokens" plugin to create SSL cookies.
  */
 add_filter( 'otat_force_https_cookie', '__return_true' );
+
+
+/**
+ * Avoid autocomplete in password fields of protected posts.
+ */
+function cc_pmed_secure_postpass_form ( $form ) {
+
+	$needed_form = str_replace(
+		array(
+			'class="post-password-form"',
+			'name="post_password"',
+		),
+		array(
+			'class="post-password-form" autocomplete="off"',
+			'name="post_password" autocomplete="off"',
+		),
+		$form
+	);
+	return $needed_form;
+}
+add_filter( 'the_password_form', 'cc_pmed_secure_postpass_form');
+
+
+/**
+ * Provide pluggable WP function to create the post password cookie
+ * with secure attributes. Works only when a password field will be used.
+ * So NO effect on tokenized posts handled by plugin "Post Password Token"!
+ */
+if ( !function_exists( 'wp_safe_redirect' ) ) {
+	function wp_safe_redirect($location, $status = 302) {
+		// Added part: make the hardcoded WP cookie "secure" and "httponly".
+		// Fires only when the password field is used (Post PW Token circumvents this!).
+		if ( isset($_GET['action']) && $_GET['action'] == 'postpass' ) { // set in wp-login.php
+			global $hasher, $expire;
+			$ssl = true;
+
+			setcookie( 'wp-postpass_' . COOKIEHASH,
+				$hasher->HashPassword( wp_unslash( $_POST['post_password'] ) ),
+				$expire,
+				COOKIEPATH,
+				'',   // actual domain
+				$ssl, // secure
+				true  // httponly
+			);
+			// Since we die here, the cookie has to be renewed already.
+			if( strlen($location) == 0 )
+				wp_die( 'Ihr Webbrowser scheint keinen Referer zu senden.<br/>Bitte verwenden Sie daher jetzt die Zur&uuml;ck-Schaltfl&auml;che Ihres Browsers und dr&uuml;cken Sie dann die Taste F5 auf Ihrer Tastatur ("Aktualisieren").' );
+
+		} // End of added part - what follows is WP stuff.
+
+		// Need to look at the URL the way it will end up in wp_redirect()
+		$location = wp_sanitize_redirect($location);
+		$location = wp_validate_redirect($location, admin_url());
+		wp_redirect($location, $status);
+	}
+}
+
+// Just a note:
+////////////////////
+// To change hardcoded cookie attributes of the plugin "Post Password Token"
+// to more secure ones you would have to do additionally:
+//   remove_action( 'template_redirect', 'ppt_template_redirect' );
+// and then hijack cookie creation by a custom cc_pmed_replace_ppt_cookie()
+// function. Finally do a:
+//   add_action( 'template_redirect', 'cc_pmed_replace_ppt_cookie', 5 );
+
 
