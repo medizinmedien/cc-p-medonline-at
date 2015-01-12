@@ -61,7 +61,7 @@ function cc_pmed_begin_headway_obstart() {
 add_action('headway_html_open', 'cc_pmed_begin_headway_obstart');
 // Finish buffering.
 function cc_pmed_headway_ob_end_flush() {
-	ob_end_flush;
+	ob_end_flush();
 }
 add_action('headway_html_close', 'cc_pmed_headway_ob_end_flush');
 
