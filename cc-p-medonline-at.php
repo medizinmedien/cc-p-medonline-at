@@ -3,7 +3,7 @@
  * Plugin Name: Custom Code for p.medonline.at
  * Description: Essentielle Funktionalit&auml;t f&uuml;r p.medonline.at. Betrifft vor allem den Seitenschutz, falls Besucher nicht eingeloggt sind. HTTPS wird grunds&auml;tzlich erzwungen. Fullstory-Einbindung. Verhinderung des Einbettens von p.medonline.at-Inhalten in externe Frames.
  * Author: Frank St&uuml;rzebecher
- * Version: 0.4
+ * Version: 0.4.1
  * Plugin URI: https://github.com/medizinmedien/allgemein/cc-p-medonline-at
  */
 
@@ -82,10 +82,11 @@ function cc_pmed_not_logged_in() {
 	$redirect_excludes = array(
 		'impressum',
 		'kontakt',
+		'gesdine'
 	);
 
 	if ( ! is_front_page() && ! is_user_logged_in() && ! in_array( $slug, $redirect_excludes )
-	&& empty( $post->post_password ) ) {
+	&& empty( $post->post_password ) && empty( get_metadata( 'post', $post->ID, 'is_public', true ) ) ) {
 
 		if ( function_exists( 'is_otat_protected_post' ) && is_otat_protected_post() ) {
 
