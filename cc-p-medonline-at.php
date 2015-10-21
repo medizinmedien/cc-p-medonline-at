@@ -3,25 +3,20 @@
  * Plugin Name: Custom Code for p.medonline.at
  * Description: Essentielle Funktionalit&auml;t f&uuml;r p.medonline.at. Betrifft vor allem den Seitenschutz, falls Besucher nicht eingeloggt sind. HTTPS wird grunds&auml;tzlich erzwungen. Fullstory-Einbindung. Verhinderung des Einbettens von p.medonline.at-Inhalten in externe Frames.
  * Author: Frank St&uuml;rzebecher
- * Version: 0.4.1
+ * Version: 0.5
  * Plugin URI: https://github.com/medizinmedien/allgemein/cc-p-medonline-at
  */
 
 defined( 'ABSPATH' ) || exit();
 
 /**
- * Load Fullstory from Shared Includes.
+ * Stetic.
  */
-function cc_pmed_load_fullstory() {
-
-	$fullstory_file = WP_PLUGIN_DIR . '/Shared-Includes/inc/track/fullstory-tracking.php';
-
-	if( file_exists( $fullstory_file ) )
-		include( $fullstory_file );
-
+$stetic_include = WP_PLUGIN_DIR . '/Shared-Includes/inc/track/stetic_p_medonline_at.php';
+if( file_exists( $stetic_include ) ) {
+	require_once( $stetic_include );
 }
-add_action( 'wp_footer',    'cc_pmed_load_fullstory' );
-add_action( 'login_footer', 'cc_pmed_load_fullstory' );
+
 
 /**
 * Embed Groove code into page footers to avoid anonymous support requests.
